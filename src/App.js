@@ -6,10 +6,11 @@ import { useEffect, useState } from 'react';
 import sData from './data.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom'
 import Detail from './routes/Detail.js';
+import axios from 'axios';
 
 function App() {
 
-  let[shoes] = useState(sData);
+  let[shoes, setShoes] = useState(sData);
   let naviGate = useNavigate();
 
   return (
@@ -29,7 +30,18 @@ function App() {
       {/* <Link to="/">홈</Link>
       <Link to="">상세페이지</Link> */}
 
-
+      <button onClick={
+        () => {
+          let tempShoes = shoes.sort((a,b) => {
+            if(a.title > b.title) return 1;
+            if(a.title < b.title) return -1;
+            return 0;
+          });
+          // console.log(tempShoes);
+          setShoes(tempShoes);
+          console.log(shoes);
+        }
+      }> 정렬하기 버튼</button>
       <Routes>
         <Route path='/' element={
             <>
@@ -37,7 +49,7 @@ function App() {
             <div className='container'>
               <div className='row'>
                 {
-                  sData.map( (data, i) =>  {
+                  shoes.map( (data, i) =>  {
                     return (
                       <Card shoes={data} i={i}/>
                     )
@@ -45,6 +57,17 @@ function App() {
                 }
               </div>
             </div>
+            <button onClick={ () => {
+              axios.get('https://codingapple1.github.io/shop/data2.json')
+              .then((result) =>{
+                let temp = [...shoes, ...result.data];
+                setShoes(temp);
+              })
+              
+              // axios.post('/sdfsdf', {name : 'kim'})
+              // Promis.all([ axios1, axios2])
+
+            }}>더보기</button>
             </>
         }/>
         <Route path='/detail/:id' element={<Detail shoes={shoes}/>}/>
