@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useEffect } from "react";
+import { Nav } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
+import {Context1} from './../App.js';
+import { useDispatch } from "react-redux";
+import { addItem } from "../store.js";
 
 let YellowButton = styled.button`
     background : ${props => props.bg};
@@ -16,6 +20,11 @@ function Detail(props) {
     // Effect? 
 
     let [displayGubun, setDisplayGubun] = useState(true);
+
+    let[tab, setTab] = useState(0);
+    // let {재고} = useContext(Context1);
+
+    let dispatch = useDispatch();
 
     useEffect(() => {
         console.log('훅');
@@ -48,7 +57,9 @@ function Detail(props) {
         }
     }, [iptValue])
     return(
+        
         <div className="container">
+       
                 {/* <YellowButton bg="blue">버튼</YellowButton>
                 <YellowButton bg="orange">버튼</YellowButton> */}
             {
@@ -69,13 +80,58 @@ function Detail(props) {
                     <h4 className="pt-5">{fingProduct.title}</h4>
                     <p>{fingProduct.content}</p>
                     <p>{fingProduct.price}</p>
-                    <button className="btn btn-danger">주문하기</button> 
+                    <button className="btn btn-danger" onClick={() => {
+                        dispatch(addItem({id : 1, name : "Grey Yordan", count : 1}));
+                    }}>주문하기</button> 
                 </div>
             </div>
+
+            <Nav variant="tabs"  defaultActiveKey="link0">
+                <Nav.Item>
+                <Nav.Link eventKey="link0" onClick={() => {setTab(0)}}>버튼0</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                <Nav.Link eventKey="link1" onClick={() => {setTab(1)}}>버튼1</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                <Nav.Link eventKey="link2" onClick={() => {setTab(2)}}>버튼2</Nav.Link>
+                </Nav.Item>
+            </Nav>
+
+            <TabContent tab={tab} />
+           
         </div> 
     )
 }
 
+function TabContent({tab}){
+    // if(tab == 0 ){
+    //     return <div >내용0</div> 
+    // }else if(tab == 1 ){
+    //     return <div >내용1</div> 
+    // }else if(tab == 2 ){
+    //     return <div >내용2</div> 
+    // }else {
+    //     return null;
+    // }
+    let {재고} = useContext(Context1);
 
+    let [fade, setFade] =useState('');
+    useEffect( () => {
+        let a = setTimeout( () => {
+            setFade('end');
+        } , 100)
+
+        // useEffect 실행전 실행하기 위함 클린함수
+        return () => {
+            clearTimeout(a);
+            setFade('');
+        }
+    },[tab]);
+    return <div className={'start ' + fade}>
+        {재고}
+        { [<div>내용0</div> ,<div >내용1</div> ,<div >내용2</div> ][tab] }
+    </div>
+}
 
 export default Detail;

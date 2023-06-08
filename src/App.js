@@ -2,16 +2,22 @@ import logo from './logo.svg';
 import './App.css';
 import { Button,Navbar, Container, Nav } from 'react-bootstrap';
 import timeTable from './img/시차표.png';
-import { useEffect, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import sData from './data.js';
 import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom'
 import Detail from './routes/Detail.js';
+import Cart from './routes/Cart.js';
 import axios from 'axios';
+
+export let Context1 = createContext();
 
 function App() {
 
   let[shoes, setShoes] = useState(sData);
   let naviGate = useNavigate();
+  let [btnCnt , setBtnCnt] = useState(0);
+  let[재고]  = useState([10,11,12]);
+
 
   return (
     <div className="App">
@@ -21,8 +27,9 @@ function App() {
         <Navbar.Brand href="#home">EGG</Navbar.Brand>
         <Nav className="me-auto">
           <Nav.Link onClick={ () => { naviGate('/')}}>Home</Nav.Link>
-          <Nav.Link onClick={ () => { naviGate('/detail/:id')}}>Detail</Nav.Link>
+          <Nav.Link onClick={ () => { naviGate('/detail/1')}}>Detail</Nav.Link>
           <Nav.Link onClick={ () => { naviGate('/event')}}>Event</Nav.Link>
+          <Nav.Link onClick={ () => { naviGate('/cart')}}>cart</Nav.Link>
         </Nav>
         </Container>
       </Navbar>
@@ -60,18 +67,27 @@ function App() {
             <button onClick={ () => {
               axios.get('https://codingapple1.github.io/shop/data2.json')
               .then((result) =>{
-                let temp = [...shoes, ...result.data];
+                setBtnCnt(btnCnt);
+                console.log(btnCnt)
+                let temp = [];
+                if(btnCnt < 3){
+                  temp = [...shoes, ...result.data];
+                }                              
                 setShoes(temp);
               })
-              
-              // axios.post('/sdfsdf', {name : 'kim'})
-              // Promis.all([ axios1, axios2])
 
             }}>더보기</button>
             </>
         }/>
-        <Route path='/detail/:id' element={<Detail shoes={shoes}/>}/>
-
+        <Route path='/detail/:id' element={
+          <Context1.Provider value={{재고, shoes}}>
+            <Detail shoes={shoes}/>
+          </Context1.Provider>
+        }/>
+        <Route path='/cart' element={
+          <Cart/>
+        }/>
+        
         <Route path='/about' element={ <About/> }>
           <Route path='member' element={<div>맴버임</div>}/>
           <Route path='location' element={ <div>위치정보임</div>}/>  
