@@ -19,6 +19,7 @@ function Detail(props) {
     // 랜더링이 완료된 후 실행된다.
     // Effect? 
 
+
     let [displayGubun, setDisplayGubun] = useState(true);
 
     let[tab, setTab] = useState(0);
@@ -47,6 +48,14 @@ function Detail(props) {
     let {id} = useParams();
     // console.log(props);
     let fingProduct = props.shoes.find( x => x.id == id);
+    useEffect( () => {
+        let getData = localStorage.getItem('watched');
+        getData = JSON.parse(getData);
+        getData.push(fingProduct.id)
+        getData = new Set(getData);
+        getData = Array.from(getData);
+        localStorage.setItem('watched' , JSON.stringify(getData))
+    }, [])
 
     let [iptValue, setIptValue] = useState('');
     useEffect( () => {

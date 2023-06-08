@@ -18,6 +18,18 @@ function App() {
   let [btnCnt , setBtnCnt] = useState(0);
   let[재고]  = useState([10,11,12]);
 
+  // localStorage는 문자만 저장할 수 있음.
+  let obj = {name : 'kim'}
+  localStorage.setItem('data' , JSON.stringify(obj));
+  let getStorage = localStorage.getItem('data');
+  console.log(JSON.parse(getStorage).name);
+
+  useEffect(() =>{
+    let getData = localStorage.getItem('warched');
+    if(getData !== null && getData !== '' && getData !== [] ){
+      localStorage.setItem('watched' , JSON.stringify( [] ))
+    }
+  }, [])
 
   return (
     <div className="App">
