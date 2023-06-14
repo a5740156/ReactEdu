@@ -8,6 +8,7 @@ import {Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom'
 import Detail from './routes/Detail.js';
 import Cart from './routes/Cart.js';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 export let Context1 = createContext();
 
@@ -18,6 +19,16 @@ function App() {
   let [btnCnt , setBtnCnt] = useState(0);
   let[재고]  = useState([10,11,12]);
 
+  let result = useQuery('작명', ()=>{
+    axios.get('https://codingapple1.github.io/userdata.json').then((a) => {
+      return a.data;
+    })
+  })
+
+  // result.data 데이터
+  // result.isLoading loading 중일때 true
+  // result.error dpfjskTdmfEo
+
   // localStorage는 문자만 저장할 수 있음.
   let obj = {name : 'kim'}
   localStorage.setItem('data' , JSON.stringify(obj));
@@ -25,7 +36,7 @@ function App() {
   console.log(JSON.parse(getStorage).name);
 
   useEffect(() =>{
-    let getData = localStorage.getItem('warched');
+    let getData = localStorage.getItem('watched');
     if(getData !== null && getData !== '' && getData !== [] ){
       localStorage.setItem('watched' , JSON.stringify( [] ))
     }
@@ -42,6 +53,9 @@ function App() {
           <Nav.Link onClick={ () => { naviGate('/detail/1')}}>Detail</Nav.Link>
           <Nav.Link onClick={ () => { naviGate('/event')}}>Event</Nav.Link>
           <Nav.Link onClick={ () => { naviGate('/cart')}}>cart</Nav.Link>
+        </Nav>
+        <Nav className='ms-auto'>
+          {result.isLoading  ? '로딩중' : 'result.data.name'}
         </Nav>
         </Container>
       </Navbar>
